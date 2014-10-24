@@ -17,8 +17,8 @@ defmodule Rabbitex.Mixfile do
                       
                       :hashex,
                       :exutils,
-                      :tinca,
 
+                      :retry,
                       :exrabbit,
                       :exactor,
                       :jazz
@@ -40,8 +40,8 @@ defmodule Rabbitex.Mixfile do
     [
       {:hashex , github: "timCF/hashex"},
       {:exutils, github: "timCF/exutils"},
-      {:tinca, github: "timCF/tinca"},
 
+      {:retry, github: "d0rc/retry"}, 
       {:exrabbit, github: "d0rc/exrabbit", branch: "rabbit-3.3"},
       {:exactor, github: "sasa1977/exactor"},
       {:jazz, github: "meh/jazz", override: true}

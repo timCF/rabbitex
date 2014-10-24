@@ -1,5 +1,6 @@
 defmodule Rabbitex do
   use Application
+  require Logger
 
   @await_limit 50
   @await_delay 100
@@ -25,7 +26,9 @@ defmodule Rabbitex do
     defstruct pool: nil,
               conn: nil,
               chan: nil,
-              number: nil
+              number: nil,
+              status: :ok,
+              busy: false
   end
 
   ##############
@@ -60,8 +63,9 @@ defmodule Rabbitex do
             nil -> 1
             some_int when is_integer(some_int) -> some_int
           end
-    case Rabbitex.Man.pool_exist?(pool) do
-      false -> %Rabbitex.Man.Pool{
+    case :erlang.whereis(pool) == :undefined do
+      true -> %Rabbitex.Man.Pool{
+                  poolname: pool,
                   username: username,
                   password: password,
                   host: host,
@@ -69,7 +73,7 @@ defmodule Rabbitex do
                   heartbeat: heartbeat,
                   size: size,
                   channels: %{}} |> Rabbitex.Man.generate_new_pool
-      true -> raise "Rabbitex : pool #{inspect pool} alreary exist!"
+      false -> raise "Rabbitex : pool #{inspect pool} alreary exist!"
     end
   end
 
@@ -78,7 +82,7 @@ defmodule Rabbitex do
   #
 
   def send(term, exchange, routing_key \\ "", pool \\ :default_rabbitex_pool, attempt \\ 1)
-  def send(_, exchange, routing_key, pool, attempt) when (attempt > @await_limit) do
+  def send(_, _, _, pool, attempt) when (attempt > @await_limit) do
     {:error, "Rabbitex : no free channels to send in pool #{inspect pool}"}
   end
   def send(term, exchange, routing_key, pool, attempt) do
@@ -87,12 +91,12 @@ defmodule Rabbitex do
       :no ->  :timer.sleep(@await_delay)
               send(term, pool, attempt+1)
       chan -> case send_proc(chan, exchange, routing_key, term |> serialize) do
-                :ok ->  Rabbitex.Man.set_free_chan(chan)
+                :ok ->  Rabbitex.Man.set_free_chan(pool, chan)
                         :ok
                 err ->  case is_valid_chan(chan) do
-                          true -> Rabbitex.Man.set_free_chan(chan)
+                          true -> Rabbitex.Man.set_free_chan(pool, chan)
                                   {:error, "Rabbitex : error #{inspect err}"}
-                          false ->  Rabbitex.Man.reload_chan(chan)
+                          false ->  Rabbitex.Man.reload_chan(pool, chan)
                                     :timer.sleep(@await_delay)
                                     send(term, pool, attempt+1)
                         end
@@ -115,7 +119,7 @@ defmodule Rabbitex do
     end
   end
 
-  defp send_proc(conn = %Chan{chan: chan}, exchange, routing_key, bin) do
+  defp send_proc(%Chan{chan: chan}, exchange, routing_key, bin) do
     case Retry.run(%{sleep: 50, tries: 3},
         fn() -> :ok = Exrabbit.Utils.publish(chan, exchange, routing_key, bin, :wait_confirmation) end) do
       {:ok, :ok} -> :ok

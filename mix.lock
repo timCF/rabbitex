@@ -1,0 +1,9 @@
+%{"amqp_client": {:git, "git://github.com/d0rc/amqp_client.git", "16b6c421139dba0a34d6c1e26f56c1dde5057a7f", []},
+  "exactor": {:git, "git://github.com/sasa1977/exactor.git", "0467f8100bc735405d597dbf94996195eb31e0b6", []},
+  "exrabbit": {:git, "git://github.com/d0rc/exrabbit.git", "864301555c38dac0a1b224d6a914156ab8139d87", [branch: "rabbit-3.3"]},
+  "extask": {:git, "git://github.com/timCF/extask.git", "4164dddf3135c44623d77e9cba07324595353d6b", []},
+  "exutils": {:git, "git://github.com/timCF/exutils.git", "8cdc6adcbaa5ea473c7172c83906b6e83cf3a4c6", []},
+  "hashex": {:git, "git://github.com/timCF/hashex.git", "e657aac2f6dac000fa940b884e955cbd099009f4", []},
+  "jazz": {:git, "git://github.com/meh/jazz.git", "49f335492aca5516495199dd81dd18b845ebaa69", []},
+  "rabbit_common": {:git, "git://github.com/issuu/rabbit_common.git", "e3484d3ea4d9b57ae12da58c5c9dcf529a686139", [tag: "v3.3.0"]},
+  "retry": {:git, "git://github.com/d0rc/retry.git", "6f1f744fc4f002bc763383e0e872e5bf0dec6b3e", []}}
