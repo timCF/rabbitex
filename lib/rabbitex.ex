@@ -110,7 +110,7 @@ defmodule Rabbitex do
 
   defp serialize(term) do
     case HashUtils.is_hash?(term) do
-      true -> HashUtils.to_map(term) |> Jazz.encode!
+      true -> HashUtils.to_map(term) |> Exutils.prepare_to_jsonify |> Jazz.encode!
       false -> 
         case is_binary(term) do
           true -> term
