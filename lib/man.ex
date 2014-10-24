@@ -21,7 +21,7 @@ defmodule Rabbitex.Man do
 	##############
 
 	def generate_new_pool(pool = %Pool{poolname: poolname}) do
-		:ok = :supervisor.start_child(Rabbitex.Supervisor, Supervisor.Spec.worker(Rabbitex.Man, [pool], [id: poolname])) |> elem(0)
+		:ok = :supervisor.start_child(Rabbitex.Supervisor, Supervisor.Spec.worker(Rabbitex.Man, [pool], [id: to_string(poolname)])) |> elem(0)
 	end
 	def get_free_chan(pname) do
 		case :erlang.whereis(pname) do
