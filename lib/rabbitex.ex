@@ -1,5 +1,6 @@
 defmodule Rabbitex do
   use Application
+  use Hashex, [Rabbitex.Man.Pool, Rabbitex.Chan]
   require Logger
 
   @await_limit 50
@@ -22,7 +23,6 @@ defmodule Rabbitex do
   end
 
   defmodule Chan do
-    @derive [HashUtils]
     defstruct pool: nil,
               conn: nil,
               chan: nil,

@@ -4,7 +4,6 @@ defmodule Rabbitex.Man do
 	@timeout :timer.minutes(1)
 
 	defmodule Pool do
-		@derive [HashUtils]
 		defstruct 	poolname: nil,
 					username: "",
 					password: "",
